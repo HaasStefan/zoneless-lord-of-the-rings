@@ -1,0 +1,9 @@
+<div class="p-4 rounded-lg shadow-xl flex flex-col items-center gap-2">
+  <h1 *rxLet="count$; let count">Counter: {{ count$ | async }}</h1>
+    <button
+      (click)="increment()"
+      class="bg-red-400 text-white rounded p-2 shadow-xl"
+    >
+      Increment
+    </button>
+</div>

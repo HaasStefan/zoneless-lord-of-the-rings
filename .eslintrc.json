@@ -6,6 +6,7 @@
     {
       "files": ["*.ts"],
       "extends": [
+        "plugin:@rx-angular/zoneless",
         "plugin:@nx/angular",
         "plugin:@angular-eslint/template/process-inline-templates"
       ],
@@ -30,7 +31,10 @@
     },
     {
       "files": ["*.html"],
-      "extends": ["plugin:@nx/angular-template"],
+      "extends": [
+        "plugin:@nx/angular-template",
+        "plugin:@rx-angular/zoneless"
+      ],
       "rules": {}
     }
   ]

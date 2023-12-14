@@ -1,1 +1,7 @@
-<org-nx-welcome></org-nx-welcome> <router-outlet></router-outlet>
+<div class="flex justify-center md:p-8">
+  <div class="p-4 lg:basis-1/2 flex flex-col gap-4">
+    <input type="text" class="border-2 border-gray-400 rounded p-1 " placeholder="Input a number" [formControl]="input" />
+
+    <router-outlet></router-outlet>
+  </div>
+</div>

@@ -1,4 +1,24 @@
-<h1>Character:</h1>
-<pre *rxLet="character$; let character">
-    <code >{{ character | json }}</code>
-</pre>
+<div
+  *rxIf="character$; let character"
+  class="grid grid-cols-4 gap-4 p-8 rounded-2xl bg-amber-200 border-4 border-amber-400 shadow-2xl"
+>
+  <div class="font-bold">Name:</div>
+  <div>{{ character.name }}</div>
+  <div class="font-bold">Height:</div>
+  <div>{{ character.height }}</div>
+
+  <div class="font-bold">Date of Birth:</div>
+  <div>{{ character.date_of_birth }}</div>
+  <div class="font-bold">Date of Death:</div>
+  <div>{{ character.date_of_death }}</div>
+
+  <div class="font-bold">Hair color:</div>
+  <div>{{ character.hair_color }}</div>
+  <div class="font-bold">Eye color:</div>
+  <div>{{ character.eye_color }}</div>
+
+  <div class="font-bold">Weapons:</div>
+  <div class="col-span-3 flex gap-4">
+    <div *rxFor="let weapon of character.weapons">{{ weapon }}</div>
+  </div>
+</div>

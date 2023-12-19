@@ -13,6 +13,7 @@
         "outputPath": "dist/org",
         "index": "./src/index.html",
         "browser": "./src/main.ts",
+        "polyfills": [],
         "tsConfig": "./tsconfig.app.json",
         "inlineStyleLanguage": "scss",
         "assets": ["./src/favicon.ico", "./src/assets"],

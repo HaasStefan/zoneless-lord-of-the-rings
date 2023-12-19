@@ -9,9 +9,9 @@ import { CharactersService } from '../characters.service';
 import { rxState } from '@rx-angular/state';
 import { Character } from '../character.model';
 import { rxEffects } from '@rx-angular/state/effects';
-import { Subject, combineLatest, filter, map, share, shareReplay, tap } from 'rxjs';
-import { RxLet } from '@rx-angular/template/let';
-import { ActivatedRoute } from '@angular/router';
+import { Observable, filter, map, withLatestFrom } from 'rxjs';
+import { RxFor } from '@rx-angular/template/for';
+import { RxIf } from '@rx-angular/template/if';
 
 interface State {
   id: number | null;
@@ -26,54 +26,46 @@ const initialState: State = {
 @Component({
   selector: 'org-character',
   standalone: true,
-  imports: [CommonModule, RxLet],
+  imports: [CommonModule, RxIf, RxFor],
   templateUrl: './character.component.html',
   styleUrl: './character.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CharacterComponent {
   readonly charactersState = inject(CharactersService);
-  readonly #route = inject(ActivatedRoute);
-  readonly id$ = this.#route.params.pipe(
-    map(({ id }) => parseInt(id, 10)),
-    filter((id): id is number => !isNaN(id)),
-    shareReplay({ bufferSize: 1, refCount: true })
-  );
 
-  readonly #state = rxState<State>(({ set, connect }) => {
+  @Input() set id(id$: Observable<number>) {
+    this.state.connect('id', id$);
+  }
+
+  readonly state = rxState<State>(({ set, connect, select }) => {
     set(initialState);
-    connect('id', this.id$);
     connect(
       'character',
-      combineLatest({
-        characters: this.charactersState.characters$,
-        id: this.id$,
-      }).pipe(
+      this.charactersState.characters$.pipe(
+        withLatestFrom(select('id')),
         filter(
-          (
-            combined
-          ): combined is {
-            characters: typeof combined.characters;
-            id: number;
-          } => combined.id !== null
+          (combined): combined is [Record<number, Character>, number] =>
+            combined[1] !== null
         ),
-        map(({ characters, id }) => characters[id] ?? null),
-        tap(console.warn),
+        map(([characters, id]) => characters[id] ?? null)
       )
     );
   });
 
-  readonly #effects = rxEffects(({ register }) => {
-    register(this.#state.select('id'), (id) => {
+  readonly effects = rxEffects(({ register }) => {
+    register(this.state.select('id'), (id) => {
       if (id !== null) {
         this.charactersState.actions.loadCharacter({ id });
       }
     });
-
-    register(this.#state.select('character'), (character) => {
-      console.log("character: ", character);
-    });
   });
 
-  readonly character$ = this.#state.select('character');
+  readonly character$ = this.state
+    .select('character')
+    .pipe(
+      filter(
+        (character): character is NonNullable<typeof character> => !!character
+      )
+    );
 }
